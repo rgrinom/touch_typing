@@ -1,5 +1,4 @@
 from application import Application
 
-k = 1.5
-app = Application(640 * k, 480 * k)
+app = Application(1080, 720)
 app.run()

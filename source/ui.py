@@ -1,24 +1,40 @@
 import pygame
-import test_drawer
 import test_checker
+import test_statistics
+import test_drawer
+import test_statistics_drawer
+from state import State
+from colors import Colors
 
 class UI:
-  def __init__(self, width: int, height: int, test_checker: test_checker.TestChecker) -> None:
+  def __init__(self, width: int, height: int,
+               test_checker: test_checker.TestChecker,
+               test_statistics: test_statistics.TestStatistics) -> None:
     pygame.init()
     self.__screen = pygame.display.set_mode((width, height))
-    self.__test_checker = test_checker
-    self.__test_drawer = test_drawer.TestDrawer(self.__screen, self.__test_checker)
+    self.__test_drawer = test_drawer.TestDrawer(self.__screen, test_checker)
+    self.__test_statistics_drawer = test_statistics_drawer.TestStatisticsDrawer(self.__screen, test_statistics)
 
-    self.__current_drawers = [self.__test_drawer]
+    self.set_mode(State.Test)
     self.__running = True
 
   def is_running(self) -> bool:
     return self.__running
 
   def run(self) -> None:
+    self.__screen.fill(Colors.BackGround)
     self.__draw()
+    pygame.display.flip()
     self.__check_clicks()
 
+  def set_mode(self, mode: State):
+    match mode:
+      case State.Test:
+        self.__current_drawers = [self.__test_drawer]
+      case State.Statistics:
+        self.__current_drawers = [self.__test_statistics_drawer]
+        self.__test_statistics_drawer.save()
+    
   def __draw(self) -> None:
     for drawer in self.__current_drawers:
       drawer.draw()

@@ -1,14 +1,31 @@
 import time
+import matplotlib.pyplot as plt
 
 class TestStatistics:
   def __init__(self) -> None:
-    self.reset()
+    pass
 
-  def reset(self) -> None:
-    self.__total_words = 0
-    self.__correct_words = 0
+  def get_test_length(self) -> int:
+    return self.__test_length
+
+  def get_duration(self) -> int:
+    return self.__duration
+  
+  def get_raw(self) -> list[float]:
+    return self.__raw_by_moment
+  
+  def get_cpm(self) -> list[float]:
+    return self.__cpm_by_moment
+  
+  def get_accuracy(self) -> list[float]:
+    return self.__accuracy_by_moment
+
+  def reset(self, test_length: int) -> None:
+    self.__test_length = test_length
+    self.__total_chars = 0
+    self.__correct_chars = 0
     self.__raw_by_moment = []
-    self.__wpm_by_moment = []
+    self.__cpm_by_moment = []
     self.__accuracy_by_moment = []
     self.__running = False
   
@@ -19,10 +36,8 @@ class TestStatistics:
 
   def end_test(self) -> None:
     self.__add_moment()
+    self.__duration = len(self.__raw_by_moment)
     self.__running = False
-
-    for i in range(len(self.__raw_by_moment)):
-      print(self.__raw_by_moment[i], self.__wpm_by_moment[i], self.__accuracy_by_moment[i], sep='\t')
   
   def upd(self) -> None:
     if not self.__running:
@@ -37,17 +52,17 @@ class TestStatistics:
 
   def __add_moment(self) -> None:
     time_past = time.time() - self.__start_time
-    self.__raw_by_moment.append(self.__total_words / time_past * 60)
-    self.__wpm_by_moment.append(self.__correct_words / time_past * 60)
+    self.__raw_by_moment.append(self.__total_chars / time_past * 60)
+    self.__cpm_by_moment.append(self.__correct_chars / time_past * 60)
     self.__accuracy_by_moment.append(
-      self.__correct_words / self.__total_words if self.__total_words != 0 else 0)
+      self.__correct_chars / self.__total_chars if self.__total_chars != 0 else 0)
   
-  def add_word(self, is_correct: bool) -> None:
-    self.__total_words += 1
+  def add_char(self, is_correct: bool) -> None:
+    self.__total_chars += 1
     if is_correct:
-      self.__correct_words += 1
+      self.__correct_chars += 1
 
-  def pop_word(self, is_correct: bool) -> None:
-    self.__total_words -= 1
+  def pop_char(self, is_correct: bool) -> None:
+    self.__total_chars -= 1
     if is_correct:
-      self.__correct_words -= 1
+      self.__correct_chars -= 1

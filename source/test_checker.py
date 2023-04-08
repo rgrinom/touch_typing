@@ -47,6 +47,13 @@ class Word:
   def is_actual_correct(self) -> bool:
     return self.__actual == self.__goal
   
+  def is_last_char_correct(self) -> bool:
+    if len(self.__actual) == 0:
+      return False
+    if len(self.__actual) > len(self.__goal):
+      return False
+    return self.__actual[-1] == self.__goal[len(self.__actual) - 1]
+  
   def empty(self) -> bool:
     return len(self.__actual) == 0
 
@@ -59,8 +66,8 @@ class TestChecker:
     self.__statistics = statistics
     self.__running = False
   
-  def set_test_length(self, length: int) -> None:
-    self.__length = length
+  def set_test_length(self, test_length: int) -> None:
+    self.__test_length = test_length
 
   def get_test(self) -> list[Word]:
     return deepcopy(self.__test)
@@ -73,30 +80,31 @@ class TestChecker:
 
   def generate_test(self) -> None:
     self.__test = []
-    for _ in range(self.__length):
+    for _ in range(self.__test_length):
       self.__test.append(Word(random.choice(self.__words)))
     self.__cur_word = 0
-    self.__statistics.reset()
+    self.__statistics.reset(self.__test_length)
     self.__running = True
   
   def check_user_input(self, char: str) -> None:
     if char == "space":
       if not self.__test[self.__cur_word].empty():
-        self.__statistics.add_word(self.__test[self.__cur_word].is_actual_correct())
         self.__cur_word += 1
-      if self.__cur_word >= self.__length:
+      if self.__cur_word >= self.__test_length:
         self.__end_test()
     elif char == "backspace":
+      is_last_char_correct = self.__test[self.__cur_word].is_last_char_correct()
       if self.__test[self.__cur_word].pop_char():
+        self.__statistics.pop_char(is_last_char_correct)
         return
       if (self.__cur_word > 0 and
           not self.__test[self.__cur_word - 1].is_actual_correct()):
-        self.__statistics.pop_word(False)
         self.__cur_word -= 1
     else:
       self.__test[self.__cur_word].add_char(char)
       if not self.__statistics.is_running():
         self.__statistics.start_test()
+      self.__statistics.add_char(self.__test[self.__cur_word].is_last_char_correct())
       if self.__test[-1].is_actual_correct():
         self.__end_test()
 
