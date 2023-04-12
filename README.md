@@ -10,10 +10,10 @@
 ## Управление
 Английские буквы и пробел - для прохождения теста.\
 r - для повторного прохождения теста.\
-Escape - для выхода из тренажера.\
+Escape - для выхода из тренажера.
 
 ## Установка и запуск
 git clone git@github.com:rgrinom/touch_typing.git\
 cd touch_typing\
 pip install -r requirements.txt\
-python3 main.py\
+python3 main.py
