@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(1, 'source')
+sys.path.insert(1, 'src')
 
 from application import Application
 import Globals

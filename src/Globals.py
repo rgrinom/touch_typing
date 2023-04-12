@@ -1,5 +1,5 @@
-WORDS_PATH = "content/words.txt"
-STATISTICS_PATH = "content/test_statistics.png"
+WORDS_PATH = "content/data/words.txt"
+STATISTICS_PATH = "content/images/test_statistics.png"
 
 TEST_TEXT_SIZE = 30
 TEST_TEXT_AREA_WIDTH_K = 0.8
