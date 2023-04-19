@@ -2,7 +2,7 @@ import random
 from enum import Enum
 from copy import deepcopy
 import test_statistics
-import Globals
+import globals
 
 
 class CharState(Enum):
@@ -17,6 +17,12 @@ class Word:
         self.__goal = goal
         self.__actual = ""
         self.__char_state = [CharState.NotTouched] * len(goal)
+
+    def get_goal_len(self):
+        return len(self.__goal)
+    
+    def get_actual_len(self):
+        return len(self.__actual)
 
     def get_goal(self):
         return deepcopy(self.__goal)
@@ -63,7 +69,7 @@ class Word:
 
 class TestChecker:
     def __init__(self, statistics: test_statistics.TestStatistics) -> None:
-        with open(Globals.WORDS_PATH, 'r') as fin:
+        with open(globals.WORDS_PATH, 'r') as fin:
             self.__words = fin.readlines()
             for i in range(len(self.__words)):
                 self.__words[i] = self.__words[i].strip()
@@ -93,6 +99,9 @@ class TestChecker:
     def check_user_input(self, char: str) -> None:
         if char == "space":
             if not self.__test[self.__cur_word].empty():
+                diff = self.__test[self.__cur_word].get_goal_len() - self.__test[self.__cur_word].get_actual_len()
+                if diff > 0:
+                    self.__statistics.add_char(False, diff)
                 self.__cur_word += 1
             if self.__cur_word >= self.__test_length:
                 self.__end_test()
@@ -105,6 +114,9 @@ class TestChecker:
             if (self.__cur_word > 0 and
                     not self.__test[self.__cur_word - 1].is_actual_correct()):
                 self.__cur_word -= 1
+                diff = self.__test[self.__cur_word].get_goal_len() - self.__test[self.__cur_word].get_actual_len()
+                if diff > 0:
+                    self.__statistics.pop_char(False, diff)
         else:
             self.__test[self.__cur_word].add_char(char)
             if not self.__statistics.is_running():

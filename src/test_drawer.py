@@ -4,7 +4,7 @@ import pygame.locals
 import test_checker
 from colors import Colors
 from state import State
-import Globals
+import globals
 
 
 class TestDrawer:
@@ -13,7 +13,7 @@ class TestDrawer:
     def __init__(self, screen: pygame.Surface, test_checker: test_checker.TestChecker) -> None:
         self.__screen = screen
         self.__test_checker = test_checker
-        self.__font = pygame.freetype.Font(None, Globals.TEST_TEXT_SIZE)
+        self.__font = pygame.freetype.Font(None, globals.TEST_TEXT_SIZE)
         self.__font.origin = True
 
     def draw(self) -> None:
@@ -30,7 +30,7 @@ class TestDrawer:
         pygame.draw.rect(
             self.__screen,
             Colors.ForeGround,
-            pygame.Rect(self.__coursor_x, self.__coursor_y, Globals.COURSOR_WIDTH, self.__coursor_h))
+            pygame.Rect(self.__coursor_x, self.__coursor_y, globals.COURSOR_WIDTH, self.__coursor_h))
 
     def __get_lines(self) -> None:
         test = self.__test_checker.get_test()
@@ -40,13 +40,17 @@ class TestDrawer:
         s = ""
         cur_line_char_state = []
         for ind in range(len(test)):
-            add = test[ind].get_goal()
-            add_char_state = test[ind].get_char_state()
-            if len(test[ind].get_actual()) > len(test[ind].get_goal()):
-                add += test[ind].get_actual()[len(test[ind].get_goal()):]
+            # add = test[ind].get_goal()
+            # if len(test[ind].get_actual()) > len(test[ind].get_goal()):
+            #     add += test[ind].get_actual()[len(test[ind].get_goal()):]
+            # add += ' '
+            add = test[ind].get_actual()
+            if (len(test[ind].get_goal()) > len(test[ind].get_actual())):
+                add += test[ind].get_goal()[len(test[ind].get_actual()):]
             add += ' '
+            add_char_state = test[ind].get_char_state()
             add_char_state.append(test_checker.CharState.Correct)
-            if self.__font.get_rect(s + add).w > self.__screen.get_size()[0] * Globals.TEST_TEXT_AREA_WIDTH_K:
+            if self.__font.get_rect(s + add).w > self.__screen.get_size()[0] * globals.TEST_TEXT_AREA_WIDTH_K:
                 self.__lines.append(s)
                 self.__char_state.append(cur_line_char_state)
                 s = ""
@@ -66,7 +70,7 @@ class TestDrawer:
         baseline = text_surf_rect.y
         text_surf = pygame.Surface(text_surf_rect.size)
         text_surf_rect.center = self.__screen.get_rect().center
-        text_surf_rect.centery += Globals.TEST_GAP_BETWEEN_LINES_K * shift * text_surf_rect.h
+        text_surf_rect.centery += globals.TEST_GAP_BETWEEN_LINES_K * shift * text_surf_rect.h
         metrics = self.__font.get_metrics(line)
         text_surf.fill(Colors.BackGround)
         x = 0

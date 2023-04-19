@@ -47,9 +47,12 @@ class UI:
             if event.type == pygame.locals.QUIT:
                 self.__end_running()
                 return State.EndRunning
-            if event.type == pygame.locals.KEYDOWN and event.key == pygame.locals.K_ESCAPE:
-                self.__end_running()
-                return State.EndRunning
+            if event.type == pygame.locals.KEYDOWN:
+                if event.key == pygame.locals.K_ESCAPE:
+                    self.__end_running()
+                    return State.EndRunning
+                elif event.key == pygame.locals.K_TAB:
+                    return State.GeneratingTest
 
             for drawer in self.__current_drawers:
                 drawer_ret = drawer.check_clicks(event)

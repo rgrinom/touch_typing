@@ -1,5 +1,4 @@
 import time
-import matplotlib.pyplot as plt
 
 
 class TestStatistics:
@@ -12,22 +11,22 @@ class TestStatistics:
     def get_duration(self) -> int:
         return self.__duration
 
-    def get_raw(self) -> list[float]:
-        return self.__raw_by_moment
-
     def get_cpm(self) -> list[float]:
         return self.__cpm_by_moment
 
-    def get_accuracy(self) -> list[float]:
-        return self.__accuracy_by_moment
+    def get_accuracy(self) -> float:
+        return 1 - self.__left_mistakes / self.__chars_in_test
+    
+    def get_real_accuracy(self) -> float:
+        return 1 - self.__total_mistakes / self.__total_chars
 
     def reset(self, test_length: int) -> None:
         self.__test_length = test_length
         self.__total_chars = 0
-        self.__correct_chars = 0
-        self.__raw_by_moment = []
+        self.__chars_in_test = 0
+        self.__total_mistakes = 0
+        self.__left_mistakes = 0
         self.__cpm_by_moment = []
-        self.__accuracy_by_moment = []
         self.__running = False
 
     def start_test(self) -> None:
@@ -37,7 +36,7 @@ class TestStatistics:
 
     def end_test(self) -> None:
         self.__add_moment()
-        self.__duration = len(self.__raw_by_moment)
+        self.__duration = len(self.__cpm_by_moment)
         self.__running = False
 
     def upd(self) -> None:
@@ -53,17 +52,17 @@ class TestStatistics:
 
     def __add_moment(self) -> None:
         time_past = time.time() - self.__start_time
-        self.__raw_by_moment.append(self.__total_chars / time_past * 60)
-        self.__cpm_by_moment.append(self.__correct_chars / time_past * 60)
-        self.__accuracy_by_moment.append(
-            self.__correct_chars / self.__total_chars if self.__total_chars != 0 else 0)
+        # self.__cpm_by_moment.append(self.__correct_chars / time_past * 60)
+        self.__cpm_by_moment.append((self.__total_chars - self.__left_mistakes) / time_past * 60)
 
-    def add_char(self, is_correct: bool) -> None:
-        self.__total_chars += 1
-        if is_correct:
-            self.__correct_chars += 1
+    def add_char(self, is_correct: bool, cnt: int = 1) -> None:
+        self.__total_chars += cnt
+        self.__chars_in_test += cnt
+        if not is_correct:
+            self.__total_mistakes += cnt
+            self.__left_mistakes += cnt
 
-    def pop_char(self, is_correct: bool) -> None:
-        self.__total_chars -= 1
-        if is_correct:
-            self.__correct_chars -= 1
+    def pop_char(self, is_correct: bool, cnt: int = 1) -> None:
+        self.__chars_in_test -= cnt
+        if not is_correct:
+            self.__left_mistakes -= cnt
