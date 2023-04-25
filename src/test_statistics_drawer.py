@@ -43,8 +43,8 @@ class TestStatisticsDrawer:
         ax = plt.gca()
         ax.set_facecolor(Colors.PlotBackGroundNormalized)
 
-        ax.set_ylim(ymin = 0)
-        ax.set_ylim(ymax = max(self.__statistics.get_cpm()) * 1.5)
+        ax.set_ylim(ymin=0)
+        ax.set_ylim(ymax=max(self.__statistics.get_cpm()) * 1.5)
 
         ax.spines['bottom'].set_color(Colors.BackGroundNormalized)
         ax.spines['top'].set_color(Colors.BackGroundNormalized)

@@ -16,7 +16,7 @@ class TestStatistics:
 
     def get_accuracy(self) -> float:
         return 1 - self.__left_mistakes / self.__chars_in_test
-    
+
     def get_real_accuracy(self) -> float:
         return 1 - self.__total_mistakes / self.__total_chars
 
@@ -53,7 +53,8 @@ class TestStatistics:
     def __add_moment(self) -> None:
         time_past = time.time() - self.__start_time
         # self.__cpm_by_moment.append(self.__correct_chars / time_past * 60)
-        self.__cpm_by_moment.append((self.__total_chars - self.__left_mistakes) / time_past * 60)
+        self.__cpm_by_moment.append(
+            (self.__total_chars - self.__left_mistakes) / time_past * 60)
 
     def add_char(self, is_correct: bool, cnt: int = 1) -> None:
         self.__total_chars += cnt
