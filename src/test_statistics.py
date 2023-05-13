@@ -1,4 +1,5 @@
 import time
+import globals
 
 
 class TestStatistics:
@@ -38,6 +39,9 @@ class TestStatistics:
         self.__add_moment()
         self.__duration = len(self.__cpm_by_moment)
         self.__running = False
+        with open(globals.HISTORY_PATH, 'a') as fout:
+            fout.write(str(self.__cpm_by_moment[-1]) + ' ')
+            fout.write(str(self.get_accuracy()) + '\n')
 
     def upd(self) -> None:
         if not self.__running:
@@ -52,7 +56,6 @@ class TestStatistics:
 
     def __add_moment(self) -> None:
         time_past = time.time() - self.__start_time
-        # self.__cpm_by_moment.append(self.__correct_chars / time_past * 60)
         self.__cpm_by_moment.append(
             (self.__total_chars - self.__left_mistakes) / time_past * 60)
 

@@ -8,7 +8,7 @@ import globals
 
 
 class TestDrawer:
-    __available_inputs = ("space", "backspace")
+    __available_inputs = ("space")
 
     def __init__(self, screen: pygame.Surface, test_checker: test_checker.TestChecker) -> None:
         self.__screen = screen

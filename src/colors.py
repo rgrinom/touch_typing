@@ -11,3 +11,4 @@ class Colors:
     PlotBackGroundNormalized = (40 / 255, 40 / 255, 40 / 255)
     HeadersNormalized = (104 / 255, 104 / 255, 104 / 255)
     DataNormalized = (255 / 255, 204 / 255, 0 / 255)
+    AccuracyNormalized = (0 / 255, 255 / 255, 0 / 255)

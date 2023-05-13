@@ -33,24 +33,13 @@ class Word:
     def get_char_state(self):
         return deepcopy(self.__char_state)
 
-    def add_char(self, char: str) -> None:
-        self.__actual += char
-        if len(self.__actual) > len(self.__goal):
-            self.__char_state.append(CharState.Added)
-            return
-        if self.__actual[-1] == self.__goal[len(self.__actual) - 1]:
-            self.__char_state[len(self.__actual) - 1] = CharState.Correct
-        else:
-            self.__char_state[len(self.__actual) - 1] = CharState.Incorrect
-
-    def pop_char(self) -> bool:
-        if len(self.__actual) == 0:
+    def add_char(self, char: str) -> bool:
+        if len(self.__actual) >= len(self.__goal):
             return False
-        if len(self.__actual) > len(self.__goal):
-            self.__char_state.pop()
-        else:
-            self.__char_state[len(self.__actual) - 1] = CharState.NotTouched
-        self.__actual = self.__actual[:-1]
+        if char != self.__goal[len(self.__actual)]:
+            return False
+        self.__actual += char
+        self.__char_state[len(self.__actual) - 1] = CharState.Correct
         return True
 
     def is_actual_correct(self) -> bool:
@@ -76,9 +65,6 @@ class TestChecker:
         self.__statistics = statistics
         self.__running = False
 
-    def set_test_length(self, test_length: int) -> None:
-        self.__test_length = test_length
-
     def get_test(self) -> list[Word]:
         return deepcopy(self.__test)
 
@@ -88,43 +74,49 @@ class TestChecker:
     def is_running(self) -> bool:
         return self.__running
 
-    def generate_test(self) -> None:
-        self.__test = []
-        for _ in range(self.__test_length):
-            self.__test.append(Word(random.choice(self.__words)))
+    def make_test(self) -> None:
+        with open(globals.TEST_INFO_PATH, 'r') as fin:
+            test_file_name = fin.readline()
+        if test_file_name == "random":
+            self.__generate_test()
+        else:
+            self.__load_test(test_file_name)
         self.__cur_word = 0
         self.__statistics.reset(self.__test_length)
         self.__running = True
 
+    def __generate_test(self) -> None:
+        self.__test = []
+        self.__test_length = globals.TEST_LENGTH
+        for _ in range(self.__test_length):
+            self.__test.append(Word(random.choice(self.__words)))
+
+    def __load_test(self, test_file_name: str) -> None:
+        self.__test = []
+        with open(globals.TESTS_PATH + test_file_name, 'r') as fin:
+            lines = fin.readlines()
+            words = []
+            for line in lines:
+                lst = list(line.split())
+                for word in lst:
+                    words.append(word)
+            self.__test_length = len(words)
+            for word in words:
+                self.__test.append(Word(word))
+
     def check_user_input(self, char: str) -> None:
         if char == "space":
-            if not self.__test[self.__cur_word].empty():
-                diff = self.__test[self.__cur_word].get_goal_len(
-                ) - self.__test[self.__cur_word].get_actual_len()
-                if diff > 0:
-                    self.__statistics.add_char(False, diff)
+            if not self.__test[self.__cur_word].is_actual_correct():
+                self.__statistics.add_char(False)
+            else:
                 self.__cur_word += 1
             if self.__cur_word >= self.__test_length:
                 self.__end_test()
-        elif char == "backspace":
-            is_last_char_correct = self.__test[self.__cur_word].is_last_char_correct(
-            )
-            if self.__test[self.__cur_word].pop_char():
-                self.__statistics.pop_char(is_last_char_correct)
-                return
-            if (self.__cur_word > 0 and
-                    not self.__test[self.__cur_word - 1].is_actual_correct()):
-                self.__cur_word -= 1
-                diff = self.__test[self.__cur_word].get_goal_len(
-                ) - self.__test[self.__cur_word].get_actual_len()
-                if diff > 0:
-                    self.__statistics.pop_char(False, diff)
         else:
-            self.__test[self.__cur_word].add_char(char)
+            is_char_correct = self.__test[self.__cur_word].add_char(char)
             if not self.__statistics.is_running():
                 self.__statistics.start_test()
-            self.__statistics.add_char(
-                self.__test[self.__cur_word].is_last_char_correct())
+            self.__statistics.add_char(is_char_correct)
             if self.__test[-1].is_actual_correct():
                 self.__end_test()
 

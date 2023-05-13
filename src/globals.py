@@ -1,5 +1,10 @@
 WORDS_PATH = "content/data/words.txt"
 STATISTICS_PATH = "content/images/test_statistics.png"
+TEST_INFO_PATH = "content/data/test_info.txt"
+TESTS_PATH = "content/tests/"
+HISTORY_PATH = "content/data/history.txt"
+
+TEST_LENGTH = 25
 
 TEST_TEXT_SIZE = 30
 TEST_TEXT_AREA_WIDTH_K = 0.8
