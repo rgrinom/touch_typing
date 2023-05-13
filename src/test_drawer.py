@@ -8,7 +8,7 @@ import globals
 
 
 class TestDrawer:
-    __available_inputs = ("space")
+    __available_inputs = ("space", "backspace")
 
     def __init__(self, screen: pygame.Surface, test_checker: test_checker.TestChecker) -> None:
         self.__screen = screen
@@ -40,10 +40,6 @@ class TestDrawer:
         s = ""
         cur_line_char_state = []
         for ind in range(len(test)):
-            # add = test[ind].get_goal()
-            # if len(test[ind].get_actual()) > len(test[ind].get_goal()):
-            #     add += test[ind].get_actual()[len(test[ind].get_goal()):]
-            # add += ' '
             add = test[ind].get_actual()
             if (len(test[ind].get_goal()) > len(test[ind].get_actual())):
                 add += test[ind].get_goal()[len(test[ind].get_actual()):]

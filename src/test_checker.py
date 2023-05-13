@@ -33,13 +33,24 @@ class Word:
     def get_char_state(self):
         return deepcopy(self.__char_state)
 
-    def add_char(self, char: str) -> bool:
-        if len(self.__actual) >= len(self.__goal):
-            return False
-        if char != self.__goal[len(self.__actual)]:
-            return False
+    def add_char(self, char: str) -> None:
         self.__actual += char
-        self.__char_state[len(self.__actual) - 1] = CharState.Correct
+        if len(self.__actual) > len(self.__goal):
+            self.__char_state.append(CharState.Added)
+            return
+        if self.__actual[-1] == self.__goal[len(self.__actual) - 1]:
+            self.__char_state[len(self.__actual) - 1] = CharState.Correct
+        else:
+            self.__char_state[len(self.__actual) - 1] = CharState.Incorrect
+
+    def pop_char(self) -> bool:
+        if len(self.__actual) == 0:
+            return False
+        if len(self.__actual) > len(self.__goal):
+            self.__char_state.pop()
+        else:
+            self.__char_state[len(self.__actual) - 1] = CharState.NotTouched
+        self.__actual = self.__actual[:-1]
         return True
 
     def is_actual_correct(self) -> bool:
@@ -106,17 +117,33 @@ class TestChecker:
 
     def check_user_input(self, char: str) -> None:
         if char == "space":
-            if not self.__test[self.__cur_word].is_actual_correct():
-                self.__statistics.add_char(False)
-            else:
+            if not self.__test[self.__cur_word].empty():
+                diff = self.__test[self.__cur_word].get_goal_len(
+                ) - self.__test[self.__cur_word].get_actual_len()
+                if diff > 0:
+                    self.__statistics.add_char(False, diff)
                 self.__cur_word += 1
             if self.__cur_word >= self.__test_length:
                 self.__end_test()
+        elif char == "backspace":
+            is_last_char_correct = self.__test[self.__cur_word].is_last_char_correct(
+            )
+            if self.__test[self.__cur_word].pop_char():
+                self.__statistics.pop_char(is_last_char_correct)
+                return
+            if (self.__cur_word > 0 and
+                    not self.__test[self.__cur_word - 1].is_actual_correct()):
+                self.__cur_word -= 1
+                diff = self.__test[self.__cur_word].get_goal_len(
+                ) - self.__test[self.__cur_word].get_actual_len()
+                if diff > 0:
+                    self.__statistics.pop_char(False, diff)
         else:
-            is_char_correct = self.__test[self.__cur_word].add_char(char)
+            self.__test[self.__cur_word].add_char(char)
             if not self.__statistics.is_running():
                 self.__statistics.start_test()
-            self.__statistics.add_char(is_char_correct)
+            self.__statistics.add_char(
+                self.__test[self.__cur_word].is_last_char_correct())
             if self.__test[-1].is_actual_correct():
                 self.__end_test()
 

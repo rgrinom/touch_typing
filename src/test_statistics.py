@@ -41,7 +41,7 @@ class TestStatistics:
         self.__running = False
         with open(globals.HISTORY_PATH, 'a') as fout:
             fout.write(str(self.__cpm_by_moment[-1]) + ' ')
-            fout.write(str(self.get_accuracy()) + '\n')
+            fout.write(str(self.get_real_accuracy()) + '\n')
 
     def upd(self) -> None:
         if not self.__running:

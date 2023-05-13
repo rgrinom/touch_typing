@@ -82,22 +82,26 @@ class TestStatisticsDrawer:
         self.__screen.blit(plot_surf, plot_rect)
 
         self.__draw_text("cpm", self.__left_margin + self.__working_area_width *
-                         0.5 / 4, self.__results_titles_top_margin, Colors.NotTouchedChar)
+                         0.5 / 5, self.__results_titles_top_margin, Colors.NotTouchedChar)
         self.__draw_text("acc", self.__left_margin + self.__working_area_width *
-                         1.5 / 4, self.__results_titles_top_margin, Colors.NotTouchedChar)
+                         1.5 / 5, self.__results_titles_top_margin, Colors.NotTouchedChar)
+        self.__draw_text("real acc", self.__left_margin + self.__working_area_width *
+                         2.5 / 5, self.__results_titles_top_margin, Colors.NotTouchedChar)
         self.__draw_text("words", self.__left_margin + self.__working_area_width *
-                         2.5 / 4, self.__results_titles_top_margin, Colors.NotTouchedChar)
+                         3.5 / 5, self.__results_titles_top_margin, Colors.NotTouchedChar)
         self.__draw_text("time", self.__left_margin + self.__working_area_width *
-                         3.5 / 4, self.__results_titles_top_margin, Colors.NotTouchedChar)
+                         4.5 / 5, self.__results_titles_top_margin, Colors.NotTouchedChar)
 
         self.__draw_text(str(int(self.__statistics.get_cpm(
-        )[-1])), self.__left_margin + self.__working_area_width * 0.5 / 4, self.__results_top_margin, Colors.ForeGround)
+        )[-1])), self.__left_margin + self.__working_area_width * 0.5 / 5, self.__results_top_margin, Colors.ForeGround)
         self.__draw_text(str(int(self.__statistics.get_accuracy(
-        ) * 100)) + '%', self.__left_margin + self.__working_area_width * 1.5 / 4, self.__results_top_margin, Colors.ForeGround)
+        ) * 100)) + '%', self.__left_margin + self.__working_area_width * 1.5 / 5, self.__results_top_margin, Colors.ForeGround)
+        self.__draw_text(str(int(self.__statistics.get_real_accuracy(
+        ) * 100)) + '%', self.__left_margin + self.__working_area_width * 2.5 / 5, self.__results_top_margin, Colors.ForeGround)
         self.__draw_text(str(self.__statistics.get_test_length()), self.__left_margin +
-                         self.__working_area_width * 2.5 / 4, self.__results_top_margin, Colors.ForeGround)
+                         self.__working_area_width * 3.5 / 5, self.__results_top_margin, Colors.ForeGround)
         self.__draw_text(str(self.__statistics.get_duration()) + 's', self.__left_margin +
-                         self.__working_area_width * 3.5 / 4, self.__results_top_margin, Colors.ForeGround)
+                         self.__working_area_width * 4.5 / 5, self.__results_top_margin, Colors.ForeGround)
 
         self.__draw_text("To try again press 'Tab'", self.__restart_left_margin,
                          self.__restart_top_margin, Colors.NotTouchedChar)
